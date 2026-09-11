@@ -1,6 +1,6 @@
 # Market Flick AI 🚀
 
-Market Flick AI is a comprehensive business analysis platform that helps entrepreneurs and businesses make data-driven decisions through AI-powered market analysis. The platform provides real-time market insights, competitor analysis, and strategic recommendations using advanced AI models.
+Market Flick AI is a comprehensive business analysis platform that helps entrepreneurs and businesses make data-driven decisions through AI-powered market analysis. The platform provides real-time market insights, competitive analysis, and strategic recommendations powered by advanced AI agents.
 
 ## Features
 
@@ -27,7 +27,6 @@ Link to our [Technical Documentation](./Technical_Documentation.md)
 
 ## Video Demo
 Link to our [Video Demo](https://www.loom.com/share/145e85e6659d47f2b00a0f2ef0703586)
-
 
 ## Getting Started
 
@@ -74,26 +73,48 @@ uvicorn main:app --reload
 ### Environment Variables
 
 #### Backend (.env)
+
+⚠️ **IMPORTANT**: Never commit `.env` files with real credentials to version control.
+
+Copy `.env.example` to `.env` and populate with your actual values:
+
+```bash
+cp .env.example .env
+```
+
+Required environment variables:
+
 ```env
-MONGODB_URI="mongodb+srv://shawonmajid:shawonmajid@cluster0.akth5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-OPENAI_API_KEY=""
-PPLX_API_KEY=""
-TAVILY_API_KEY=""
-NVIDIA_API_KEY=""
+# Database Configuration
+MONGODB_URI=your_mongodb_connection_string
+
+# API Keys
+OPENAI_API_KEY=your_openai_api_key
+PPLX_API_KEY=your_perplexity_api_key
+TAVILY_API_KEY=your_tavily_api_key
+NVIDIA_API_KEY=your_nvidia_api_key
 
 # Authentication
-JWT_SECRET_KEY=""
-JWT_ALGORITHM="HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES="30"
-REFRESH_TOKEN_EXPIRE_DAYS="7"
+JWT_SECRET_KEY=your_secure_secret_key
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+REFRESH_TOKEN_EXPIRE_DAYS=7
 
 # Email Service (for authentication)
-EMAIL_PROVIDER="smtp"  # Options: "smtp" or "ses"
-EMAIL_SENDER="no-reply@marketflick.ai"
-EMAIL_SERVER="smtp.gmail.com"
-EMAIL_PORT="587"
-EMAIL_USERNAME=""
-EMAIL_PASSWORD=""
+EMAIL_PROVIDER=smtp  # Options: "smtp" or "ses"
+EMAIL_SENDER=no-reply@marketflick.ai
+EMAIL_SERVER=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USERNAME=your_email
+EMAIL_PASSWORD=your_email_password
+```
+
+### Environment File Template
+
+A `.env.example` file is included in the repository. Use it as a template for your local configuration:
+
+```bash
+cp server/.env.example server/.env
 ```
 
 ## Contributing
@@ -120,6 +141,14 @@ EMAIL_PASSWORD=""
 - Use proper type definitions
 - Follow Material-UI best practices
 
+### Security Best Practices
+- Never commit credentials or secrets to version control
+- Use environment variables for sensitive configuration
+- Validate and sanitize all user inputs
+- Implement CORS restrictions appropriately
+- Use HTTPS in production
+- Keep dependencies updated
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -138,6 +167,7 @@ For support, email support@marketflickai.com or join our Slack channel.
 ---
 
 Made with ❤️ by the Team Define Coders
+
 Team Members
 1. Ovishek Paul
 2. Shawon Majid
