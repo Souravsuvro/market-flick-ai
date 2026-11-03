@@ -10,6 +10,6 @@
 # python-multipart==0.0.20
 
 # New dependencies for auth system
-python-jose[cryptography]>=3.3.0
+python-jose[cryptography]>=3.5.0
 passlib[bcrypt]>=1.7.4
 emails>=0.6
