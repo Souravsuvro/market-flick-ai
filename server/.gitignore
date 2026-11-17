@@ -1,9 +1,14 @@
 .tool-versions
 .env
-venv
+.env.*
+!.env.example
+venv/
 **/__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
 knowledge_base/
 figures/
 responses/
 rag_base/
-qdrant_db_local/*
+qdrant_db_local/
