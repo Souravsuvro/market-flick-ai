@@ -1,94 +1,63 @@
-from fastapi import Request, HTTPException, status
-from fastapi.responses import JSONResponse
-from jose import jwt, JWTError
 import os
-from dotenv import load_dotenv
 import time
 
-# Load environment variables
+from dotenv import load_dotenv
+from fastapi import Request, status
+from fastapi.responses import JSONResponse
+from jose import JWTError, jwt
+
 load_dotenv()
 
-# JWT Configuration
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "YOUR_SUPER_SECRET_KEY_CHANGE_THIS_IN_PRODUCTION")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+if not SECRET_KEY or len(SECRET_KEY.encode("utf-8")) < 32:
+    raise RuntimeError("JWT_SECRET_KEY must be configured with at least 32 bytes.")
+if ALGORITHM not in {"HS256", "HS384", "HS512"}:
+    raise RuntimeError("JWT_ALGORITHM must be one of HS256, HS384, or HS512.")
+
+# Exact public endpoints only. Avoid prefix checks such as /auth/login-anything.
+PUBLIC_PATHS = {
+    "/",
+    "/auth/login",
+    "/auth/signup",
+    "/auth/verify-email",
+    "/auth/social-login",
+    "/auth/refresh-token",
+    "/auth/request-reset",
+    "/auth/reset-password",
+    "/auth/resend-verification",
+    "/docs",
+    "/redoc",
+    "/openapi.json",
+}
+
 
 async def verify_jwt_token(request: Request, call_next):
-    """
-    Middleware to verify JWT token for protected routes.
-    Bypasses verification for authentication endpoints and public routes.
-    """
-    # Routes that don't require authentication
-    public_paths = [
-        "/auth/login",
-        "/auth/signup",
-        "/auth/verify-email",
-        "/auth/social-login", 
-        "/auth/refresh-token",
-        "/docs",
-        "/redoc",
-        "/openapi.json",
-        "/"
-    ]
-    
-    # Check if the route is public
-    path = request.url.path
-    if any(path.startswith(public_path) for public_path in public_paths):
+    """Require a valid access token on every non-public API route."""
+    if request.url.path in PUBLIC_PATHS:
         return await call_next(request)
-    
-    # Check for Authorization header
-    authorization: str = request.headers.get("Authorization")
-    if not authorization:
+
+    authorization = request.headers.get("Authorization", "")
+    parts = authorization.split()
+    if len(parts) != 2 or parts[0].lower() != "bearer":
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"detail": "Authorization header missing"},
+            content={"detail": "A valid Bearer token is required"},
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    # Verify token format
+
     try:
-        scheme, token = authorization.split()
-        if scheme.lower() != "bearer":
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={"detail": "Invalid authentication scheme"},
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-    except ValueError:
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"detail": "Invalid token format"},
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    # Verify token
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        
-        # Check if token is access token
-        if payload.get("type") != "access":
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={"detail": "Invalid token type"},
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        
-        # Check if token is expired
-        if payload.get("exp") < time.time():
-            return JSONResponse(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                content={"detail": "Token has expired"},
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-            
-        # Add user info to request state
-        request.state.user_id = payload.get("sub")
-        
+        payload = jwt.decode(token=parts[1], key=SECRET_KEY, algorithms=[ALGORITHM])
+        if payload.get("type") != "access" or not payload.get("sub"):
+            raise JWTError("Invalid access token")
+        if payload.get("exp") is None or payload["exp"] <= time.time():
+            raise JWTError("Expired access token")
+        request.state.user_id = payload["sub"]
     except JWTError:
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"detail": "Invalid authentication token"},
+            content={"detail": "Invalid or expired authentication token"},
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    # Continue with the request
+
     return await call_next(request)

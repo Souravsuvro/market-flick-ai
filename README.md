@@ -1,144 +1,97 @@
 # Market Flick AI 🚀
 
-Market Flick AI is a comprehensive business analysis platform that helps entrepreneurs and businesses make data-driven decisions through AI-powered market analysis. The platform provides real-time market insights, competitor analysis, and strategic recommendations using advanced AI models.
+Market Flick AI is an AI-powered business analysis platform that helps entrepreneurs and businesses make data-driven decisions through market research, competitor intelligence, and strategic recommendations.
 
 ## Features
 
-### 1. Real-time Market Analysis
-- **Business Sector Analysis**: In-depth analysis of 20+ business sectors
-- **Location-based Insights**: Global market analysis with local market focus
-- **Competitor Landscape**: Detailed competitor profiling and market positioning
-- **Market Size Estimation**: TAM, SAM, and SOM calculations with projections
+### Market analysis
+- Business sector analysis across 20+ sectors
+- Location-based insights with local market focus
+- Competitor landscape and market positioning
+- TAM, SAM, and SOM estimates with projections
 
-### 2. Strategic Analysis Tools
-- **SWOT Analysis**: Comprehensive strengths, weaknesses, opportunities, and threats analysis
-- **PESTLE Analysis**: Political, Economic, Social, Technological, Legal, and Environmental factor analysis
-- **Porter's Five Forces**: Industry competition and market attractiveness assessment
-- **Market Gap Analysis**: AI-powered identification of market opportunities
+### Strategic analysis
+- SWOT analysis
+- PESTLE analysis
+- Porter's Five Forces
+- Market gap analysis and opportunity discovery
 
-### 3. Advanced Analytics
-- **Market Trends**: Real-time trend analysis and future projections
-- **Competitive Intelligence**: Detailed competitor profiling and benchmarking
-- **Strategic Recommendations**: AI-generated actionable insights
-- **Custom Reports**: Exportable reports in multiple formats (PDF, Excel, CSV)
+### Advanced analytics
+- Market trends and projections
+- Competitor profiling and benchmarking
+- AI-generated strategic recommendations
+- Exportable reports in multiple formats
 
-## Technical Documentation
-Link to our [Technical Documentation](./Technical_Documentation.md)
+## Technical documentation
+See [Technical Documentation](./Technical_Documentation.md).
 
-## Video Demo
-Link to our [Video Demo](https://www.loom.com/share/145e85e6659d47f2b00a0f2ef0703586)
+## Video demo
+[Watch the demo](https://www.loom.com/share/145e85e6659d47f2b00a0f2ef0703586).
 
-
-## Getting Started
+## Getting started
 
 ### Prerequisites
 - Node.js 18+
 - Python 3.8+
 - MongoDB
-- OpenAI API key
+- Required AI/search provider API keys
 
-### Frontend Setup
+### Frontend setup
 ```bash
-# Navigate to client directory
 cd client
-
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
 ```
 
-### Backend Setup
+### Backend setup
 ```bash
-# Navigate to server directory
 cd server
-
-# Create virtual environment
 python -m venv venv
-
-# Activate virtual environment
-source venv/bin/activate  # Linux/Mac
-.\venv\Scripts\activate   # Windows
-
-# Install dependencies
+# Activate the virtual environment for your operating system
 pip install -r requirements.txt
-
-# Initialize required directories
-./init.sh
-
-# Start server
+# Copy .env.example to .env and configure local secrets securely
 uvicorn main:app --reload
 ```
 
-### Environment Variables
+### Backend environment
+Copy `server/.env.example` to `server/.env`. Configure values using a secret manager or local environment. Never commit real credentials.
 
-#### Backend (.env)
-```env
-MONGODB_URI="mongodb+srv://shawonmajid:shawonmajid@cluster0.akth5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-OPENAI_API_KEY=""
-PPLX_API_KEY=""
-TAVILY_API_KEY=""
-NVIDIA_API_KEY=""
+Required security configuration:
+- `MONGODB_URI`: a newly rotated MongoDB connection string
+- `JWT_SECRET_KEY`: a cryptographically random secret of at least 32 bytes
+- `CORS_ORIGINS`: comma-separated exact frontend origins, including the production origin
 
-# Authentication
-JWT_SECRET_KEY=""
-JWT_ALGORITHM="HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES="30"
-REFRESH_TOKEN_EXPIRE_DAYS="7"
-
-# Email Service (for authentication)
-EMAIL_PROVIDER="smtp"  # Options: "smtp" or "ses"
-EMAIL_SENDER="no-reply@marketflick.ai"
-EMAIL_SERVER="smtp.gmail.com"
-EMAIL_PORT="587"
-EMAIL_USERNAME=""
-EMAIL_PASSWORD=""
-```
+Configure provider API keys and email settings only where the corresponding features are enabled. Never place credentials in documentation, source code, screenshots, or issue comments.
 
 ## Contributing
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit focused changes with tests.
+4. Push your branch and open a pull request.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## Development Guidelines
-
-### Code Style
-- Use TypeScript for frontend development
-- Follow PEP 8 guidelines for Python code
-- Use meaningful variable and function names
-- Add comments for complex logic
-- Write unit tests for critical functions
-
-### Component Structure
-- Create reusable components
-- Follow atomic design principles
-- Implement proper error handling
-- Use proper type definitions
-- Follow Material-UI best practices
+## Development guidelines
+- Use TypeScript for frontend development.
+- Follow PEP 8 for Python code.
+- Use meaningful names and comments for complex logic.
+- Add tests for security-sensitive and critical business logic.
+- Keep documentation aligned with the implementation.
 
 ## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See [LICENSE](./LICENSE).
 
 ## Support
-
-For support, email support@marketflickai.com or join our Slack channel.
+For support, email support@marketflickai.com.
 
 ## Acknowledgments
-
-- OpenAI for GPT-4 API
-- Material-UI team for the component library
-- FastAPI team for the backend framework
-- All contributors who have helped shape Market Flick AI
+- OpenAI for language model APIs
+- The Material UI team
+- The FastAPI team
+- All contributors who helped shape Market Flick AI
 
 ---
+Made with ❤️ by Team Define Coders
 
-Made with ❤️ by the Team Define Coders
-Team Members
+Team members:
 1. Ovishek Paul
 2. Shawon Majid
 3. Nafi Ullah Shafin
