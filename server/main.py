@@ -64,18 +64,16 @@ app = FastAPI()
 from core.auth.middleware import verify_jwt_token
 from core.auth.routes import router as auth_router
 
-origins = [
-    "http://localhost:3000",
-    "http://192.168.8.169:3000",
-    "http://98.85.58.122:3000"
-]
+origins = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",") if origin.strip()]
+if not origins:
+    raise RuntimeError("CORS_ORIGINS must contain at least one explicit frontend origin.")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins from the list
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Accept"],
 )
 
 # Add JWT verification middleware
