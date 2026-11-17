@@ -13,7 +13,7 @@ from core.util_agents.title_generator import generate_title
 from core.rag.rag import upload_and_fetch_context
 from utils.general_utils import load_response_from_db, get_all_saved_responses
 from database.db import get_database
-from fastapi import FastAPI, Depends, HTTPException, Form, UploadFile, Query, Body
+from fastapi import FastAPI, Depends, HTTPException, Form, UploadFile, Query, Body, Request
 from fastapi.responses import StreamingResponse, FileResponse
 import asyncio
 from typing import AsyncGenerator
@@ -92,16 +92,15 @@ async def root():
 
 @app.post("/business-analysis")
 async def business_analysis_stream(
+    request: Request,
     sector: str = Form(...),
     idea: str = Form(...),
     location: str = Form(...),
     links: list[str] | None = Form(None),
-    files: list[UploadFile] | None = Form(None),
-    userId : str | None = Form(None)
+    files: list[UploadFile] | None = Form(None)
 ) -> StreamingResponse:
-    # Convert form data to BusinessAnalysisInput
-    if userId is None or userId.strip() == "":
-        raise HTTPException(status_code=400, detail="User ID is required")
+    # Derive identity from the verified access token, never from client form data.
+    userId = request.state.user_id
         
 
     print('~'*100)
@@ -283,12 +282,11 @@ async def business_analysis_stream(
 
 @app.post("/previous-analysis/{knowledge_base_id}")
 async def previous_analysis_stream(
+    request: Request,
     knowledge_base_id: str,
     payload: dict = Body(...)
 ) -> StreamingResponse:
-    user_id = payload.get("user_id")
-    if user_id is None or user_id.strip() == "":
-        raise HTTPException(status_code=400, detail="User ID is required")
+    user_id = request.state.user_id
     async def generate_stream() -> AsyncGenerator[str, None]:
         try:
             yield json.dumps({
@@ -340,7 +338,8 @@ async def previous_analysis_stream(
 
 
 @app.get("/analyses")
-async def get_analyses(user_id : str | None = Query(None)):
+async def get_analyses(request: Request):
+    user_id = request.state.user_id
     """
     Endpoint to list all file names in the KNOWLEDGEBASE_PATH.
 
@@ -369,11 +368,9 @@ async def get_analyses(user_id : str | None = Query(None)):
 
     
 @app.post("/chat")
-async def chat(chat_request: ChatRequest):
+async def chat(request: Request, chat_request: ChatRequest):
     knowledge_base_id = chat_request.id
-    user_id = chat_request.user_id
-    if user_id is None or user_id.strip() == "":
-        raise HTTPException(status_code=400, detail="User ID is required")
+    user_id = request.state.user_id
     
     knowledge_base = extract_knowledge_base(knowledge_base_id)
 
